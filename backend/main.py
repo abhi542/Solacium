@@ -150,11 +150,20 @@ async def get_session_content(session_id: str):
     if doc:
         # Load this session into active short-term memory
         user_id = doc.get("user_id")
+        messages = doc.get("messages", []) # Fallback for split-schema docs
+        
+        if not messages:
+             # Try to load from messages collection if it exists (legacy of my previous refactor)
+             try:
+                 messages = await memory_system.get_session_messages(session_id)
+             except AttributeError:
+                 messages = []
+
         if user_id:
-             memory_system.short_term_memory[user_id] = doc["messages"]
+             memory_system.short_term_memory[user_id] = messages
              memory_system.active_sessions[user_id] = session_id
         return {
-            "messages": doc["messages"],
+            "messages": messages,
             "title": doc.get("title", "New vibe 🥀")
         }
     return {"messages": [], "title": "New vibe 🥀"}
