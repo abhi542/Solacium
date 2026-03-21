@@ -1,9 +1,8 @@
-# Solacium 🥀
+# Solacium 
 > **"It's not just therapy, it's a vibe check."**
 
 Solacium is a premium, AI-powered mental health companion designed specifically for the Gen Z era. It combines deep psychological reflection with a modern, high-tier aesthetic to help you navigate life's chaos without the "cringe."
 
-![Solacium Demo Path](frontend/public/next.svg) <!-- Placeholder for actual branding -->
 
 ---
 
