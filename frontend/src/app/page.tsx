@@ -1,5 +1,5 @@
 "use client";
-
+// Solacium Frontend - 
 import React, { useState, useEffect, useRef } from "react";
 import { Send, Mic, Info, RefreshCcw, Search, MessageSquare, Plus, History, LogIn, User, Circle, PanelLeftClose, Trash2, Edit3, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
