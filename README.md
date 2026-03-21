@@ -108,6 +108,8 @@ Visit [http://localhost:3000](http://localhost:3000) to start your session.
 ---
 ## Screenshot of Web App in action 
 
+<img width="2940" height="1484" alt="image" src="https://github.com/user-attachments/assets/01449935-0c30-4afe-89d7-4d2289d2bdff" />
+
 <img width="2940" height="1602" alt="image" src="https://github.com/user-attachments/assets/aa259966-9bdc-4afd-8e2b-cc662ef4d8f2" />
 
 ---
