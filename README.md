@@ -106,6 +106,11 @@ Visit [http://localhost:3000](http://localhost:3000) to start your session.
 | `NEXT_PUBLIC_WS_URL` | ws://localhost:8000/ws/chat (Backend WebSocket) |
 
 ---
+## Screenshot of Web App in action 
+
+<img width="2940" height="1602" alt="image" src="https://github.com/user-attachments/assets/aa259966-9bdc-4afd-8e2b-cc662ef4d8f2" />
+
+---
 
 ## License
 Distributed under the MIT License. Developed by [abhinavbhatt](https://github.com/abhi542).
