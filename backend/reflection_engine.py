@@ -19,29 +19,50 @@ class ReflectionEngine:
         """Analyzes the user message for psychological markers."""
         
         # We'll use a specific analysis prompt for the LLM
-        analysis_prompt = f"""Analyze the following user message within the context of their recent chat history.
-Extract structured psychological insights.
+        analysis_prompt = f"""Analyze this user message and return psychological markers.
+Message: {message}
 
-Output ONLY a JSON object with the following keys:
-- "emotions": [list of strings] (e.g., ["anxiety", "frustration"])
-- "intent": "venting" | "advice" | "overthinking" | "relationship" | "self-doubt"
-- "distortions": [list of strings] (from: "overgeneralization", "mind reading", "catastrophizing", "all-or-nothing thinking", "none")
-- "mode_selection": "Validate" | "Reality Check" | "Deep Dive"
-- "is_looping": boolean (is the user repeating the same thought or story without progress?)
-- "summary": a one-sentence summary of the core issue
+Return ONLY a flat JSON object. No markdown, no backticks, no preamble.
 
-User Message: "{message}"
-Recent History: {history[-5:] if history else "No history"}
+{{
+  "emotions": ["emotion1", "emotion2"],
+  "intent": "venting" | "advice" | "overthinking" | "relationship" | "self-doubt",
+  "distortions": ["dist1", "dist2"],
+  "mode_selection": "Validate" | "Reality Check" | "Deep Dive",
+  "is_looping": boolean,
+  "summary": "one sentence summary"
+}}
 
-Note: If the message is highly emotional, select "Validate". If it contains clear logical fallacies, select "Reality Check". If it's complex or vague, select "Deep Dive"."""
+Rules:
+- summary MUST be under 15 words and have NO newlines.
+- intent MUST be one of the listed 5 options.
+- mode_selection MUST be one of the 3 options.
+- If unsure, use "Deep Dive" and "venting"."""
 
-        # Call the LLM (non-streaming for analysis)
-        response = await self.llm_client.client.chat.completions.create(
-            model=self.llm_client.model,
-            messages=[{"role": "system", "content": "You are a psychological analysis engine. Output ONLY JSON."},
-                      {"role": "user", "content": analysis_prompt}],
-            response_format={"type": "json_object"}
-        )
-        
-        analysis_data = json.loads(response.choices[0].message.content)
-        return ReflectionAnalysis(**analysis_data)
+        try:
+            response = await self.llm_client.client.chat.completions.create(
+                model=self.llm_client.model,
+                messages=[
+                    {"role": "system", "content": "You are a JSON-only API. Never use markdown. Never use backticks. Output absolute valid JSON."},
+                    {"role": "user", "content": analysis_prompt}
+                ],
+                response_format={"type": "json_object"},
+                max_tokens=512,
+                temperature=0.1 # Low temperature for more stable JSON
+            )
+            
+            raw_content = response.choices[0].message.content
+            analysis_data = json.loads(raw_content)
+            return ReflectionAnalysis(**analysis_data)
+            
+        except Exception as e:
+            print(f"Reflection Analysis failed: {e}")
+            # Fallback to a safe default if JSON fails
+            return ReflectionAnalysis(
+                emotions=["processing"],
+                intent="venting",
+                distortions=["none"],
+                mode_selection="Validate",
+                is_looping=False,
+                summary="Just vibing and processing... 🥀"
+            )
