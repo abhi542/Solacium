@@ -1,8 +1,7 @@
-# Solacium 
-> **"It's not just therapy, it's a vibe check."**
+# Solacium
+
 
 Solacium is a premium, AI-powered mental health companion designed specifically for the Gen Z era. It combines deep psychological reflection with a modern, high-tier aesthetic to help you navigate life's chaos without the "cringe."
-
 
 ---
 
@@ -30,6 +29,37 @@ Solacium is a premium, AI-powered mental health companion designed specifically 
 
 ---
 
+## 🏗️ Technical Architecture
+
+### **Core Components**
+- **Reflection Engine (Backend)**: Uses specialized prompts to analyze user emotional state, identifying patterns like overthinking, looping, or anxiety.
+- **Vibe Tracker (Memory)**: A stateful memory system that bridges short-term buffers with long-term MongoDB persistence.
+- **Streaming Pipeline**: Real-time WebSocket connection (`/ws/chat`) for low-latency AI responses with embedded emotional analysis.
+- **Audio Processor**: Local Vosk-based STT (Speech-to-Text) for privacy-first voice journaling.
+
+---
+
+## 📡 API Reference
+
+### **Session Management**
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/sessions/{user_id}` | `GET` | Retrieve metadata-only list of all sessions for a user. |
+| `/session/{session_id}` | `GET` | Retrieve full message history for a specific session. |
+| `/session/save/{user_id}` | `POST` | Upsert the current in-memory buffer to the database. |
+| `/session/clear/{user_id}` | `POST` | Clear the active short-term memory and session pointer. |
+| `/session-action/rename/{id}`| `POST` | Update the `title` attribute of a session document. |
+| `/session-action/delete/{id}`| `POST` | Delete session metadata and associated messages. |
+
+### **Communication & AI**
+| Endpoint | Type | Description |
+|----------|------|-------------|
+| `/ws/chat` | `WS` | Bidirectional stream for user messages and AI analysis/responses. |
+| `/transcribe` | `POST` | Process 16kHz Mono WAV files into text using local Vosk models. |
+| `/analyze-message` | `POST` | Pre-submission analysis for emotional tone or overthinking. |
+
+---
+
 ## 🚀 Getting Started
 
 ### **Prerequisites**
@@ -41,9 +71,11 @@ Solacium is a premium, AI-powered mental health companion designed specifically 
 ```bash
 cd backend
 python3 -m venv venv
-source venv/bin/activate  # or venv\Scripts\activate on Windows
+source venv/bin/activate  
+# or venv\Scripts\activate on Windows
 pip install -r requirements.txt
-cp .env.example .env  # Add your MONGODB_URI and OPENAI_API_KEY
+cp .env.example .env  
+# Add your MONGODB_URI and OPENAI_API_KEY
 python3 main.py
 ```
 
@@ -67,9 +99,14 @@ Visit [http://localhost:3000](http://localhost:3000) to start your session.
 | `DB_NAME` | Database name (default: genz_therapy) |
 | `OPENAI_API_KEY` | Your AI model provider key |
 
+### **Frontend (.env.local)**
+| Variable | Description |
+|----------|-------------|
+| `NEXT_PUBLIC_BASE_URL` | http://localhost:8000 (Backend API) |
+| `NEXT_PUBLIC_WS_URL` | ws://localhost:8000/ws/chat (Backend WebSocket) |
+
 ---
 
-## 🥀 License
-Distributed under the MIT License. See `LICENSE` for more information.
+## License
+Distributed under the MIT License. Developed by [abhinavbhatt](https://github.com/abhi542).
 
-Developed with 🥀 by [abhinavbhatt](https://github.com/abhi542)
